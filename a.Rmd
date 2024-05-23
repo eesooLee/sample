@@ -1,5 +1,5 @@
 ---
-title: "STAT359AS1"
+title: "STAT359AS122"
 output:
   pdf_document: default
   html_document: default
