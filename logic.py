@@ -1,5 +1,4 @@
-"""
-Representations and Inference for Logic. (Chapters 7-9, 12)
+"""presentations and Inference for Logic. (Chapters 7-9, 12)
 
 Covers both Propositional and First-Order Logic. First we have four
 important data types:
