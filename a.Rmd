@@ -1,0 +1,147 @@
+---
+title: "STAT359AS1"
+output:
+  pdf_document: default
+  html_document: default
+date: "2024-01-26"
+---
+
+
+
+
+```{r 2(a)}
+
+PlantGrowth <- data.frame(
+  Plot = rep(c(1, 2), each = 12),
+  Treatment = rep(c("Treatment 1", "Treatment 2" ), each = 6),  # Corrected this line
+  Pot = rep(c("Pot 1", "Pot 2", "Pot 3"), each=2),  # Adjusted to match the correct number of pots
+  plant = rep(c("plant1","plant2"), each=1),
+  Plant_Growth_mm = c(14.6, 15.2, 13.2, 12.9, 16.4, 12.2, 7.1, 7.7, 6.8, 6.0, 10.0, 8.3,
+                      18.5, 16.7, 22.2, 18.8, 24.7, 20.3, 9.7, 8.8, 6.8, 9.0, 10.4, 11.3)
+)
+# Print the dataframe
+print(PlantGrowth)
+
+```
+
+
+```{r 2(b)}
+# Assuming your dataframe is named df
+library(dplyr)
+
+# Sorting the dataframe by Plant_Growth_mm
+plantGrowth_sorted <- PlantGrowth %>% arrange(Plant_Growth_mm)
+
+# Printing the sorted dataframe
+print(plantGrowth_sorted)
+
+```
+```{r 2(c)}
+# Assuming your dataframe is named df
+mean_value <- mean(PlantGrowth$Plant_Growth_mm)
+sd_value <- sd(PlantGrowth$Plant_Growth_mm)
+
+cat("Mean:", mean_value, "\n")
+cat("Standard Deviation:", sd_value, "\n")
+
+```
+
+```{r 2(d)}
+library(dplyr)
+library(ggplot2)
+
+# Plot histogram
+ggplot(PlantGrowth, aes(x = Plant_Growth_mm)) +
+  geom_histogram(binwidth = 2, fill = "skyblue", color = "black") +
+  labs(title = "Plant Growth Histogram",
+       x = "Plant Growth (mm)",
+       y = "Frequency") +
+  theme_minimal()
+```
+
+
+```{r 3}
+calculate_sample_variance <- function(y) {
+  n <- length(y)
+  if (n <= 1) {
+    stop("Sample variance requires at least two observations.")
+  }
+  
+  # Calculate sample mean
+  y_bar <- mean(y)
+  
+  # Calculate sum of squared differences
+  sum_squared_diff <- sum((y - y_bar)^2)
+  
+  # Calculate sample variance using the shortcut formula
+  sample_variance <- sum_squared_diff / (n - 1)
+  
+  return(sample_variance)
+}
+
+# Test the function with the provided vector y
+test_vector <- c(11, 11, 10, 8, 11, 3, 15, 11, 7, 6)
+result <- calculate_sample_variance(test_vector)
+
+# Print the result
+cat("Sample Variance:", result, "\n")
+
+```
+```{r 4}
+tvData<-read.table(file ='~/Desktop/stat359/data/tv.txt', sep="",header=TRUE, na.strings="NA")
+names(tvData)
+
+library(knitr)
+kable(tvData, caption='Data Table')
+```
+```{r 4(a)}
+boxplot(tvData$Canada,tvData$US, col='green',names=c('Canada','US'))
+title('TV Watching Time')
+summary(tvData)
+```
+
+```{r 4(b)}
+z.test <- function(y1, y2, H1) {
+ 
+  y1 <- y1[!is.na(y1)]
+  y2 <- y2[!is.na(y2)]
+  
+ alpha <- 0.05
+ lower <- mean(y1) - mean(y2) - qnorm(1 - (alpha/2)) * sqrt((var(y1)/length(y1)) + (var(y2)/length(y2)))
+ upper <- mean(y1) - mean(y2) + qnorm(1 - (alpha/2)) * sqrt((var(y1)/length(y1)) + (var(y2)/length(y2)))
+
+ T.obs <- (mean(y1) - mean(y2)) / sqrt((var(y1)/length(y1)) + (var(y2)/length(y2)))
+
+ if (H1 > 0) {
+   pValue <- 1 - pnorm(T.obs)
+ } else if (H1 < 0) {
+   pValue <- pnorm(T.obs)
+ } else {
+   pValue <- 2 * (1 - pnorm(abs(T.obs)))
+ }
+
+ return(list(confidence_interval = c(lower, upper), T.obs = T.obs, pValue = pValue))
+}
+
+
+```
+
+```{r 4(c)}
+y1 <- tvData$Canada
+y2 <- tvData$US
+
+# Apply the z.test function for each alternative hypothesis
+result_two_sided <- z.test(y1, y2, 0)
+result_less <- z.test(y1, y2, -1)
+result_greater <- z.test(y1, y2, 1)
+
+cat("Two-sided test:\n")
+cat("P-value:", result_two_sided$pValue, "\n")
+cat("\nOne-sided test (less):\n")
+cat("P-value:", result_less$pValue, "\n")
+cat("\nOne-sided test (greater):\n")
+cat("P-value:", result_greater$pValue, "\n")
+
+
+```
+
